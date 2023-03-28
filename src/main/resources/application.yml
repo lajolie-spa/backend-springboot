@@ -1,0 +1,23 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lajolie
+    username: huydeve
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQL81Dialect
+  devtools:
+    restart:
+      exclude: static/**,public/**
+      enabled: true
+    livereload:
+      enabled: true
+  main:
+    web-application-type: servlet
