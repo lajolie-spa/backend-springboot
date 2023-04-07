@@ -1,4 +1,6 @@
 package com.huydeve.lajolie.service.impl;
 
-public class UserServiceImpl {
+import com.huydeve.lajolie.service.UserService;
+
+public class UserServiceImpl implements UserService {
 }

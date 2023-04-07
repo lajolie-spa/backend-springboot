@@ -1,28 +1,28 @@
 package com.huydeve.lajolie.model;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.*;
 
 @Entity
 @Table(name = "_role")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Role {
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column
+    @Column(unique = true)
     private String name;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "_role_permission",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    private Set<Permission> permissions = new HashSet<>();
+    @OneToMany(mappedBy = "role")
+    Set<RoleResource> roleResources;
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<User> users;
+
 }
