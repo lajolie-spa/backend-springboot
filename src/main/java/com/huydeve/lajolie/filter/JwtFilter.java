@@ -1,4 +1,4 @@
-package com.huydeve.lajolie.security;
+package com.huydeve.lajolie.filter;
 
 import com.huydeve.lajolie.service.TokenService;
 import jakarta.servlet.FilterChain;

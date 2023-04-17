@@ -1,9 +1,9 @@
 package com.huydeve.lajolie.model;
 
 public enum Permission {
-    NO_ACCESS,
+    ACCESS,
     CREATE,
-    UPDATE,
-    DELETE,
-    READ,
+    EDIT,
+    VIEW,
+    DELETE
 }

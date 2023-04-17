@@ -1,5 +1,6 @@
 package com.huydeve.lajolie.service.impl;
 
+import com.huydeve.lajolie.exception.auth.InvalidLoginCredentialsException;
 import com.huydeve.lajolie.model.Role;
 import com.huydeve.lajolie.model.User;
 import com.huydeve.lajolie.payload.request.AuthenticationRequest;
@@ -54,14 +55,20 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
+
+
+        var user = userRepository.findByEmail(request.getUsername()).orElseThrow(()-> {
+            throw new InvalidLoginCredentialsException();
+        });
+
+        if(!authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 )
-        );
-        var user = userRepository.findByEmail(request.getUsername())
-                .orElseThrow();
+        ).isAuthenticated()){
+            throw new InvalidLoginCredentialsException();
+        }
         var accessToken = tokenService.generateToken(user);
         var refreshToken = refreshTokenService.generateRefreshToken(request.getUsername());
         revokeAllUserTokens(user);

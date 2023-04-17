@@ -1,19 +1,23 @@
 package com.huydeve.lajolie.config;
 
-import com.huydeve.lajolie.security.JwtFilter;
+import com.google.gson.Gson;
+import com.huydeve.lajolie.common.HttpResponse;
+import com.huydeve.lajolie.common.MessageResponse;
+import com.huydeve.lajolie.contant.StatusCode;
+import com.huydeve.lajolie.exception.AppException;
+import com.huydeve.lajolie.filter.JwtFilter;
+import com.huydeve.lajolie.utils.Json;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -41,7 +45,7 @@ public class SecurityConfig {
                 .disable()
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/**",
+                .requestMatchers(
                         "/api/v1/auth/**",
                         "/swagger-ui/**",
                         "/v3/api-docs/**")
@@ -58,7 +62,19 @@ public class SecurityConfig {
                 .logout()
                 .logoutUrl("/api/v1/auth/logout")
                 .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                .logoutSuccessHandler((request, response, authentication)
+                        -> SecurityContextHolder.clearContext())
+                .and().exceptionHandling()
+                .authenticationEntryPoint((request, response, e) -> {
+
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.getWriter().write(Json.convertToJson(HttpResponse.builder()
+                            .withStatusCode(StatusCode.USER_NOT_AUTHORIZED)
+                            .withMessage(MessageResponse.MESSAGE.get(StatusCode.USER_NOT_AUTHORIZED))
+                            .build()));
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                })
         ;
 
         return http.build();

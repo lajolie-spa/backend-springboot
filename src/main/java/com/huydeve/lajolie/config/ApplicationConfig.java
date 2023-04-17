@@ -32,9 +32,9 @@ public class ApplicationConfig {
         Role role = roleRepository.findRoleByName("normal");
         if(role == null)
              role = roleRepository.save(Role.builder().name("normal").build());
-
         return role;
     }
+
     @Bean
     public LogoutHandler securityContextLogoutHandler() {
         return new SecurityContextLogoutHandler();

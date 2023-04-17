@@ -1,5 +1,6 @@
 package com.huydeve.lajolie.controller;
 
+import com.huydeve.lajolie.common.HttpResponse;
 import com.huydeve.lajolie.payload.request.AuthenticationRequest;
 import com.huydeve.lajolie.payload.request.RegisterRequest;
 import com.huydeve.lajolie.payload.response.AuthenticationResponse;
@@ -32,24 +33,25 @@ public class AuthController {
 
 
     @PostMapping(path = "/authenticate", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<AuthenticationResponse> authenticate(
+    public HttpResponse<AuthenticationResponse> authenticate(
             @RequestBody( description= "Book to add.", required = true,
                     content = @Content(
                             schema=@Schema(implementation = AuthenticationRequest.class)))
-            @Valid AuthenticationRequest request
+            @Valid @org.springframework.web.bind.annotation.RequestBody AuthenticationRequest request
     ) {
-        return ResponseEntity.ok(service.authenticate(request));
+
+        return HttpResponse.success(service.authenticate(request));
     }
 
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    public HttpResponse<AuthenticationResponse> register(
             @RequestBody( description= "Book to add.", required = true,
                     content = @Content(
                             schema=@Schema(implementation = RegisterRequest.class)))
             @Valid @org.springframework.web.bind.annotation.RequestBody RegisterRequest request
     ) {
         System.out.println(request.getPassword());
-        return ResponseEntity.ok(service.register(request));
+        return HttpResponse.success(service.register(request));
     }
 }
